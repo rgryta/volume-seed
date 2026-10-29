@@ -18,6 +18,7 @@ import (
 	"os/signal"
 	"path/filepath"
 	"strings"
+	"syscall"
 )
 
 const seedRoot = "/seed"
@@ -30,8 +31,9 @@ func main() {
 			log.Fatalf("seed %s: %v", target, err)
 		}
 	}
+	// Wait only for stop signals. Notify with no list also receives the SIGURG that the Go runtime sends to itself for preemption.
 	c := make(chan os.Signal, 1)
-	signal.Notify(c)
+	signal.Notify(c, syscall.SIGTERM, syscall.SIGINT)
 	<-c
 }
 

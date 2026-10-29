@@ -8,7 +8,7 @@ Docker fills an anonymous volume from the image only when it creates the volume.
 
 ## What it does
 
-`/pause <target>...` does these steps for each target, then waits for a signal:
+`/pause <target>...` does these steps for each target, then waits for SIGTERM or SIGINT:
 
 1. It calculates a fingerprint of `/seed<target>` (the path, mode, size and mtime of each entry).
 2. If `<target>/.seed-stamp` has the same fingerprint, it does nothing.
@@ -20,9 +20,9 @@ Mount points in a target stay. For example, a named volume at `/opt/tools/gcloud
 
 ```dockerfile
 FROM scratch
-COPY --from=ghcr.io/rgryta/volume-seed:1.0.0 /pause /pause
+COPY --from=ghcr.io/rgryta/volume-seed:1.0.1 /pause /pause
 # An empty target directory that uid 1000 owns, so that uid 1000 can write to a new volume
-COPY --from=ghcr.io/rgryta/volume-seed:1.0.0 --chown=1000:1000 /empty /opt/tools
+COPY --from=ghcr.io/rgryta/volume-seed:1.0.1 --chown=1000:1000 /empty /opt/tools
 # Put the payload under /seed, not at the target
 COPY --from=builder --chown=1000:1000 /opt/tools/ /seed/opt/tools/
 USER 1000:1000
